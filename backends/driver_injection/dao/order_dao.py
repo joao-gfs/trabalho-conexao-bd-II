@@ -27,7 +27,6 @@ def inserir_pedido(pedido):
             inserir_order_detail(sessao, produto)
 
         con.commit()
-
         return "Pedido inserido com sucesso!", 200
     except Exception as e:
         return f"Erro ao inserir pedido: {e}", 400
