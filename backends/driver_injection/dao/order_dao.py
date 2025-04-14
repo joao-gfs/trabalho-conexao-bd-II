@@ -31,10 +31,19 @@ def inserir_pedido(pedido):
         sessao.close()
         con.close()
 
-def inserir_order_detail(sessao, order_detail):
-    try:
-        sessao.execute(
-            f"INSERT INTO northwind.order_details (orderid, productid, unitprice, quantity) VALUES ({order_detail.orderid}, {order_detail.productid}, {order_detail.unitprice}, {order_detail.quantity})"
-        )
-    except Exception as e:
-        raise Exception(f"Erro ao inserir pedido: {e}")
+def inserir_order_details(order_details):
+    con = conectar_bd()
+    if con == None:
+        return "Erro de conexão com banco de dados", 500
+    sessao = con.cursor()
+
+    for order_detail in order_details:
+        try:
+            sessao.execute(
+                f"INSERT INTO northwind.order_details (orderid, productid, unitprice, quantity) VALUES ({order_detail.orderid}, {order_detail.productid}, {order_detail.unitprice}, {order_detail.quantity})"
+            )
+        except Exception as e:
+            return f"Erro ao inserir produto {order_detail.productid}", 500
+    con.commit()
+
+    return f"Produtos inseridos corretamente"

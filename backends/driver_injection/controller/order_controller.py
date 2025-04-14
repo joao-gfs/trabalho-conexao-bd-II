@@ -9,6 +9,9 @@ def inserir_pedido(orderid, customerid, employeename, produtos=[]):
         return "Erro de conexão com banco de dados", 500
     sessao = con_db.cursor()
 
+    if produtos == []:
+        return "Lista de produtos vazia", 400
+
     sessao.execute(f"SELECT customerid FROM northwind.customers WHERE customerid = '{customerid}'")
     cliente_existe = sessao.fetchall()
 
@@ -38,13 +41,9 @@ def inserir_pedido(orderid, customerid, employeename, produtos=[]):
 
         details.append(OrderDetails(orderid=pedido.orderid, productid=produto['productid'], unitprice=unitprice, quantity=produto['quantity']))
 
-    res = dao.inserir_pedido(pedido)
-    for detail in details:
-        try:
-            dao.inserir_order_detail(sessao, detail)
-        except Exception as e:
-            return e, 500
+    res_pedido = dao.inserir_pedido(pedido)
+    res_details = dao.inserir_order_details(details)
 
     sessao.close()
     con_db.close()
-    return res
+    return res_pedido

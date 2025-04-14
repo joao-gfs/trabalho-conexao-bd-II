@@ -1,13 +1,15 @@
+from flask_cors import CORS
 from flask import Flask, request, jsonify
 import controller.order_controller as ctrl
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/", methods=['POST'])
 def inserir_pedido():
     data = request.get_json()   
     mensagem, status = ctrl.inserir_pedido(
-        data['orderid'],
+        data['orderid'],    
         data['customerid'],
         data['employeename'],
         data['produtos']
