@@ -1,0 +1,65 @@
+body{
+    background: rgb(70, 142, 236);
+    font: normal 15pt Courier;
+    margin: auto;
+}
+
+header {
+    color: rgb(238, 234, 191);
+    text-align: center;
+}
+
+h1 {
+    margin: 0 auto;
+}
+
+h3 {
+    margin: 10px;
+}
+
+main {
+    margin: 0 auto;
+    min-width: 900px;
+    text-align: center;
+    background: rgb(238, 234, 191);
+    border: 2px solid rgba(0, 0, 0, 0.692);
+    padding: 15px;
+    width: 500px;
+    margin: auto;
+    box-shadow: 5px 5px 1px rgba(0, 0, 0, 0.300);
+}
+
+input{
+    margin: 5px;
+    border: 2px solid rgba(0, 0, 0, 0.692);
+    box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.300);
+}
+
+button {
+    font-size: 0.75em;
+    background-color: rgb(238, 234, 191);
+    border: 2px solid rgba(0, 0, 0, 0.692);
+    box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.300);
+    margin-top: 10px;
+}
+
+.produto-item {
+    margin: 2px 0;
+    padding: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.produto-item button {
+    background-color: rgb(238, 57, 57);
+    color: rgb(238, 234, 191);;
+}
+
+
+footer{
+    color: rgb(238, 234, 191) ;
+    font: bold 20pt Courier;
+    text-align: center;
+    font-style: italic;
+}

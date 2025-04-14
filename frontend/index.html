@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BD II</title>
+  <link rel="stylesheet" href="azul-e-bege.css">
+</head>
+<body>
+  <header>
+    <p>Banco de Dados II - Prática 2 - Conexão com Banco de Dados</p>
+  </header>
+  <main>
+    <h1>Northwind</h1>
+    <h3>Insira seu pedido</h3>
+
+    <form id="pedidoForm">
+      <label for="orderid">Número do pedido:</label>
+      <input type="text" id="orderid" name="orderid"><br>
+
+      <label for="customerid">ID do cliente:</label>
+      <input type="text" id="customerid" name="customerid"><br>
+
+      <label for="employeename">Nome do vendedor:</label>
+      <input type="text" id="employeename" name="employeename"><br>
+
+      <h3>Produtos</h3>
+
+      <label for="productid">ID do produto:</label>
+      <input type="number" id="productid"><br>
+
+      <label for="quantity">Quantidade:</label>
+      <input type="number" id="quantity"><br>
+
+      <button type="button" onclick="adicionarProduto()">Adicionar Produto</button>
+
+      <div id="listaProdutos"></div>
+
+      <br>
+      <button type="submit">Enviar</button>
+    </form>
+  </main>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
