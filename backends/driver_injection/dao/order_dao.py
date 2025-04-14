@@ -23,9 +23,6 @@ def inserir_pedido(pedido):
         sessao.execute(
             f"INSERT INTO northwind.orders (orderid, customerid, employeeid) VALUES ({pedido.orderid}, '{pedido.customerid}', {pedido.employeeid});"
         )
-        for produto in pedido.products:
-            inserir_order_detail(sessao, produto)
-
         con.commit()
         return "Pedido inserido com sucesso!", 200
     except Exception as e:

@@ -5,11 +5,11 @@ app = Flask(__name__)
 
 @app.route("/", methods=['POST'])
 def inserir_pedido():
-    data = request.get_json()
+    data = request.get_json()   
     mensagem, status = ctrl.inserir_pedido(
         data['orderid'],
         data['customerid'],
-        data['employeeid'],
+        data['employeename'],
         data['produtos']
     )
     
