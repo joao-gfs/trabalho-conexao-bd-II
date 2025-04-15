@@ -5,8 +5,8 @@ def conectar_bd():
         bd = psycopg.connect(
             host='localhost',
             dbname='northwind',
-            user='postgres',
-            password='pgsql456'
+            user='hiara',
+            password='12345'
         )
         return bd
     except Exception as e:
@@ -40,6 +40,49 @@ def inserir_pedido(pedido, order_details):
     except Exception as e:
         con.rollback()
         return f"Erro ao inserir pedido: {e}", 400
+    finally:
+        sessao.close()
+        con.close()
+
+def buscar_pedido(orderid, con):
+    con = conectar_bd()
+    if con is None:
+        return "Erro de conexão com banco de dados", 500
+    sessao = con.cursor()
+
+    query = """
+        select o.orderid, o.orderdate, c.companyname, e.firstname, e.lastname, p.productname, od.quantity, od.unitprice, od.quantity * od.unitprice as total 
+        from northwind.orders o join northwind.order_details od on o.orderid = od.orderid 
+        join northwind.customers c on o.customerid = c.customerid join northwind.employees e on o.employeeid = e.employeeid join northwind.products p on od.productid = p.productid where o.orderid = {orderid}
+    """
+
+    try:
+        sessao.execute(query)
+        rows = sessao.fetchall()
+
+        if not rows:
+            return None
+        
+        pedido = {
+            "orderId": rows[0][0],
+            "orderDate": rows[0][1].isoformat(),
+            "customerName": rows[0][2],
+            "employeeName": f"{rows[0][3]} {rows[0][4]}",
+            "itens": []
+        }
+
+        for row in rows:
+            pedido["itens"].append({
+                "productName": row[5],
+                "quantity": row[6],
+                "unitPrice": float(row[7]),
+                "total": float(row[8])
+            })
+
+        return pedido
+    except Exception as e:
+        print("Erro ao buscar pedido:", e)
+        return None
     finally:
         sessao.close()
         con.close()

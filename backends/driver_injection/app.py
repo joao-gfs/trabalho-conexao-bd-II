@@ -18,3 +18,12 @@ def inserir_pedido():
     if status >= 400:
         return jsonify({"erro": mensagem}), status
     return jsonify({"mensagem": mensagem}), status
+
+@app.route("/pedido/<int:orderid>", methods=['GET'])
+def relatorio_pedido(orderid):
+    data, status = ctrl.get_pedido(orderid)
+
+    if status >= 400:
+        return jsonify({"erro": data}), status
+    return jsonify({"mensagem": data}), status
+

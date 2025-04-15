@@ -46,3 +46,18 @@ def inserir_pedido(orderid, customerid, employeename, produtos=[]):
     sessao.close()
     con_db.close()
     return res
+
+def get_pedido(orderid):
+    con_db = dao.conectar_bd()
+    if con_db is None:
+        return "Erro de conexão com banco de dados", 500
+
+    try:
+        data = dao.buscar_pedido(orderid, con_db)
+        if not data:
+            return "Pedido não encontrado", 404
+        return data, 200
+    except Exception as e:
+        return str(e), 500
+    finally:
+        con_db.close()
