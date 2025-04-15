@@ -41,9 +41,8 @@ def inserir_pedido(orderid, customerid, employeename, produtos=[]):
 
         details.append(OrderDetails(orderid=pedido.orderid, productid=produto['productid'], unitprice=unitprice, quantity=produto['quantity']))
 
-    res_pedido = dao.inserir_pedido(pedido)
-    res_details = dao.inserir_order_details(details)
+    res = dao.inserir_pedido(pedido, details)
 
     sessao.close()
     con_db.close()
-    return res_pedido
+    return res
