@@ -9,18 +9,52 @@ class Base(DeclarativeBase):
     pass
 
 
-class Categories(Base):
-    __tablename__ = 'categories'
+class Orders(Base):
+    __tablename__ = 'orders'
     __table_args__ = (
-        PrimaryKeyConstraint('categoryid', name='categories_pkey'),
+        ForeignKeyConstraint(['customerid'], ['northwind.customers.customerid'], name='fk_customer'),
+        ForeignKeyConstraint(['employeeid'], ['northwind.employees.employeeid'], name='fk_employees'),
+        PrimaryKeyConstraint('orderid', name='orders_pkey'),
         {'schema': 'northwind'}
     )
 
-    categoryid: Mapped[int] = mapped_column(Integer, primary_key=True)
-    categoryname: Mapped[Optional[str]] = mapped_column(String(50))
-    description: Mapped[Optional[str]] = mapped_column(String(100))
+    orderid: Mapped[int] = mapped_column(Integer, primary_key=True)
+    customerid: Mapped[str] = mapped_column(String(5))
+    employeeid: Mapped[int] = mapped_column(Integer)
+    orderdate: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
+    requireddate: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
+    shippeddate: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
+    freight: Mapped[Optional[decimal.Decimal]] = mapped_column(Numeric(15, 4))
+    shipname: Mapped[Optional[str]] = mapped_column(String(35))
+    shipaddress: Mapped[Optional[str]] = mapped_column(String(50))
+    shipcity: Mapped[Optional[str]] = mapped_column(String(15))
+    shipregion: Mapped[Optional[str]] = mapped_column(String(15))
+    shippostalcode: Mapped[Optional[str]] = mapped_column(String(9))
+    shipcountry: Mapped[Optional[str]] = mapped_column(String(15))
+    shipperid: Mapped[Optional[int]] = mapped_column(Integer)
 
-    products: Mapped[List['Products']] = relationship('Products', back_populates='categories')
+    customers: Mapped['Customers'] = relationship('Customers', back_populates='orders')
+    employees: Mapped['Employees'] = relationship('Employees', back_populates='orders')
+    order_details: Mapped[List['OrderDetails']] = relationship('OrderDetails', back_populates='orders')
+
+
+class OrderDetails(Base):
+    __tablename__ = 'order_details'
+    __table_args__ = (
+        ForeignKeyConstraint(['orderid'], ['northwind.orders.orderid'], name='fk_order'),
+        ForeignKeyConstraint(['productid'], ['northwind.products.productid'], name='fk_product'),
+        PrimaryKeyConstraint('orderid', 'productid', name='order_details_pkey'),
+        {'schema': 'northwind'}
+    )
+
+    orderid: Mapped[int] = mapped_column(Integer, primary_key=True)
+    productid: Mapped[int] = mapped_column(Integer, primary_key=True)
+    unitprice: Mapped[Optional[decimal.Decimal]] = mapped_column(Numeric(13, 4))
+    quantity: Mapped[Optional[int]] = mapped_column(SmallInteger)
+    discount: Mapped[Optional[decimal.Decimal]] = mapped_column(Numeric(10, 4))
+
+    orders: Mapped['Orders'] = relationship('Orders', back_populates='order_details')
+    products: Mapped['Products'] = relationship('Products', back_populates='order_details')
 
 
 class Customers(Base):
@@ -107,35 +141,6 @@ class Suppliers(Base):
     products: Mapped[List['Products']] = relationship('Products', back_populates='suppliers')
 
 
-class Orders(Base):
-    __tablename__ = 'orders'
-    __table_args__ = (
-        ForeignKeyConstraint(['customerid'], ['northwind.customers.customerid'], name='fk_customer'),
-        ForeignKeyConstraint(['employeeid'], ['northwind.employees.employeeid'], name='fk_employees'),
-        PrimaryKeyConstraint('orderid', name='orders_pkey'),
-        {'schema': 'northwind'}
-    )
-
-    orderid: Mapped[int] = mapped_column(Integer, primary_key=True)
-    customerid: Mapped[str] = mapped_column(String(5))
-    employeeid: Mapped[int] = mapped_column(Integer)
-    orderdate: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
-    requireddate: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
-    shippeddate: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
-    freight: Mapped[Optional[decimal.Decimal]] = mapped_column(Numeric(15, 4))
-    shipname: Mapped[Optional[str]] = mapped_column(String(35))
-    shipaddress: Mapped[Optional[str]] = mapped_column(String(50))
-    shipcity: Mapped[Optional[str]] = mapped_column(String(15))
-    shipregion: Mapped[Optional[str]] = mapped_column(String(15))
-    shippostalcode: Mapped[Optional[str]] = mapped_column(String(9))
-    shipcountry: Mapped[Optional[str]] = mapped_column(String(15))
-    shipperid: Mapped[Optional[int]] = mapped_column(Integer)
-
-    customers: Mapped['Customers'] = relationship('Customers', back_populates='orders')
-    employees: Mapped['Employees'] = relationship('Employees', back_populates='orders')
-    order_details: Mapped[List['OrderDetails']] = relationship('OrderDetails', back_populates='orders')
-
-
 class Products(Base):
     __tablename__ = 'products'
     __table_args__ = (
@@ -161,20 +166,16 @@ class Products(Base):
     order_details: Mapped[List['OrderDetails']] = relationship('OrderDetails', back_populates='products')
 
 
-class OrderDetails(Base):
-    __tablename__ = 'order_details'
+class Categories(Base):
+    __tablename__ = 'categories'
     __table_args__ = (
-        ForeignKeyConstraint(['orderid'], ['northwind.orders.orderid'], name='fk_order'),
-        ForeignKeyConstraint(['productid'], ['northwind.products.productid'], name='fk_product'),
-        PrimaryKeyConstraint('orderid', 'productid', name='order_details_pkey'),
+        PrimaryKeyConstraint('categoryid', name='categories_pkey'),
         {'schema': 'northwind'}
     )
 
-    orderid: Mapped[int] = mapped_column(Integer, primary_key=True)
-    productid: Mapped[int] = mapped_column(Integer, primary_key=True)
-    unitprice: Mapped[Optional[decimal.Decimal]] = mapped_column(Numeric(13, 4))
-    quantity: Mapped[Optional[int]] = mapped_column(SmallInteger)
-    discount: Mapped[Optional[decimal.Decimal]] = mapped_column(Numeric(10, 4))
+    categoryid: Mapped[int] = mapped_column(Integer, primary_key=True)
+    categoryname: Mapped[Optional[str]] = mapped_column(String(50))
+    description: Mapped[Optional[str]] = mapped_column(String(100))
 
-    orders: Mapped['Orders'] = relationship('Orders', back_populates='order_details')
-    products: Mapped['Products'] = relationship('Products', back_populates='order_details')
+    products: Mapped[List['Products']] = relationship('Products', back_populates='categories')
+
