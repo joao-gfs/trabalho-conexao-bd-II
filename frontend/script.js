@@ -78,3 +78,110 @@ document.getElementById('pedidoForm').addEventListener('submit', async function 
         alert("Erro de conexão com o backend.");
     }
 });
+
+async function RelatorioPedido() {
+    const orderId = document.getElementById('orderid').value;
+
+    if (!orderId) {
+        alert('Informe o número do pedido.');
+        return;
+    }
+
+    try {
+        const resposta = await fetch(`http://localhost:5000/pedido/${orderId}`);
+
+        if (!resposta.ok) {
+            throw new Error('Pedido não encontrado.');
+        }
+
+        const dados = await resposta.json();
+
+        const resultado = document.getElementById('resultadoRelatorio');
+        const totalGeral = dados.itens.reduce((soma, item) => soma + item.total, 0);
+
+        resultado.innerHTML = `
+            <h3>Pedido #${dados.orderId}</h3>
+            <p><strong>Data:</strong> ${new Date(dados.orderDate).toLocaleDateString()}</p>
+            <p><strong>Cliente:</strong> ${dados.customerName}</p>
+            <p><strong>Vendedor:</strong> ${dados.employeeName}</p>
+            <h4>Itens do Pedido:</h4>
+            <table border="1" cellpadding="5">
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Quantidade</th>
+                  <th>Preço Unitário</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${dados.itens.map(item => `
+                  <tr>
+                    <td>${item.productName}</td>
+                    <td>${item.quantity}</td>
+                    <td>R$ ${item.unitPrice.toFixed(2)}</td>
+                    <td>R$ ${item.total.toFixed(2)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3"><strong>Total Geral:</strong></td>
+                  <td><strong>R$ ${totalGeral.toFixed(2)}</strong></td>
+                </tr>
+              </tfoot>
+            </table>
+        `;
+    } catch (erro) {
+        document.getElementById('resultadoRelatorio').innerHTML =
+            `<p style="color: red;">Erro: ${erro.message}</p>`;
+    }
+}
+
+async function RelatorioRanking() {
+    const startDate = document.getElementById('startdate').value;
+    const endDate = document.getElementById('enddate').value;
+  
+    if (!startDate || !endDate) {
+      alert("Informe as duas datas.");
+      return;
+    }
+  
+    try {
+      const resposta = await fetch(`http://localhost:5000/ranking?start=${startDate}&end=${endDate}`);
+      if (!resposta.ok) {
+        throw new Error("Erro ao buscar ranking.");
+      }
+  
+      const dados = await resposta.json();
+  
+      const resultado = document.getElementById('resultadoRanking');
+      if (dados.length === 0) {
+        resultado.innerHTML = `<p>Nenhum resultado encontrado para o período.</p>`;
+        return;
+      }
+  
+      resultado.innerHTML = `
+        <table border="1" cellpadding="5">
+          <thead>
+            <tr>
+              <th>Funcionário</th>
+              <th>Total de Vendas</th>
+              <th>Total Vendido (R$)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${dados.map(func => `
+              <tr>
+                <td>${func.firstname}</td>
+                <td>${func.total_vendas}</td>
+                <td>R$ ${parseFloat(func.total_vendido).toFixed(2)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    } catch (erro) {
+      document.getElementById('resultadoRanking').innerHTML = `<p style="color:red;">Erro: ${erro.message}</p>`;
+    }
+  }  

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BD II</title>
+  <link rel="stylesheet" href="azul-e-bege.css">
+</head>
+<body>
+  <header>
+    <p>Banco de Dados II - Prática 2 - Conexão com Banco de Dados</p>
+  </header>
+  <main>
+    <h1>Relatório de Ranking dos Funcionários</h1>
+    <h3>Insira os Dados</h3>
+
+    <form id="pedidoForm">
+      <label for="firstname">Nome do Funcionário:</label>
+      <input type="text" id="firstname" name="firstname"><br>
+
+      <label for="startdate">Data Inicial</label>
+      <input type="date" id="startdate" name="startdate"><br>
+
+      <label for="enddate">Data Final</label>
+      <input type="date" id="enddate" name="enddate"><br>
+
+      <button type="button" onclick="RelatorioHanking()">Emitir Relatório</button>
+
+      <br>
+    </form>
+  </main>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
