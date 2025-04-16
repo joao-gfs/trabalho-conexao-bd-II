@@ -13,7 +13,6 @@ def conectar_bd():
         print(e)
         return None
 
-
 def inserir_order(sessao, pedido):
     sessao.execute(
         "INSERT INTO northwind.orders (orderid, customerid, employeeid) VALUES (%s, %s, %s);",
@@ -50,22 +49,27 @@ def buscar_pedido(orderid, con):
         return "Erro de conexão com banco de dados", 500
     sessao = con.cursor()
 
-    query = f"""
+    query = """
         select o.orderid, o.orderdate, c.companyname, e.firstname, e.lastname, p.productname, od.quantity, od.unitprice, od.quantity * od.unitprice as total 
         from northwind.orders o join northwind.order_details od on o.orderid = od.orderid 
-        join northwind.customers c on o.customerid = c.customerid join northwind.employees e on o.employeeid = e.employeeid join northwind.products p on od.productid = p.productid where o.orderid = {orderid}
+        join northwind.customers c on o.customerid = c.customerid join northwind.employees e on o.employeeid = e.employeeid join northwind.products p on od.productid = p.productid where o.orderid = %s
     """
     
     try:
-        sessao.execute(query)
+        sessao.execute(query, (orderid,))
         rows = sessao.fetchall()
 
         if not rows:
             return None
         
+        if not rows[0][1]:
+            order_date = "Não registrado"
+        else:
+            order_date = rows[0][1].isoformat()
+
         pedido = {
             "orderId": rows[0][0],
-            "orderDate": rows[0][1].isoformat(),
+            "orderDate": order_date,
             "customerName": rows[0][2],
             "employeeName": f"{rows[0][3]} {rows[0][4]}",
             "itens": []
@@ -93,16 +97,16 @@ def buscar_ranking(start, end, con):
         return "Erro de conexão com banco de dados", 500
     sessao = con.cursor()
 
-    query = f"""
+    query = """
         select e.firstname, count(o.orderid) as total_vendas, sum(od.unitprice * od.quantity) as total_vendido
         from northwind.orders o join northwind.employees e on o.employeeid = e.employeeid
         join northwind.order_details od on o.orderid = od.orderid
-        where o.orderdate between '{start}' and '{end}'
+        where o.orderdate between %s and %s
         group by e.firstname order by total_vendido desc
     """
 
     try:
-        sessao.execute(query)
+        sessao.execute(query, (start, end))
         rows = sessao.fetchall()
 
         if not rows:
@@ -123,6 +127,3 @@ def buscar_ranking(start, end, con):
     finally:
         sessao.close()
         con.close()
-        
-
-        

@@ -101,9 +101,15 @@ async function RelatorioPedido() {
         const resultado = document.getElementById('resultadoRelatorio');
         const totalGeral = conteudo.itens.reduce((soma, item) => soma + item.total, 0);
 
+        if (conteudo.orderDate == "Não registrado") {
+            order_date = conteudo.orderDate
+        } else {
+            order_date = new Date(conteudo.orderDate).toLocaleDateString()
+        }
+
         resultado.innerHTML = `
             <h3>Pedido ${conteudo.orderId}</h3>
-            <p><strong>Data:</strong> ${new Date(conteudo.orderDate).toLocaleDateString()}</p>
+            <p><strong>Data:</strong> ${order_date}</p>
             <p><strong>Cliente:</strong> ${conteudo.customerName}</p>
             <p><strong>Vendedor:</strong> ${conteudo.employeeName}</p>
             <h4>Itens do Pedido:</h4>

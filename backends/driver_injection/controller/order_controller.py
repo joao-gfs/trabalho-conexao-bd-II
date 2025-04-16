@@ -12,13 +12,19 @@ def inserir_pedido(orderid, customerid, employeename, produtos=[]):
     if produtos == []:
         return "Lista de produtos vazia", 400
 
-    sessao.execute(f"SELECT customerid FROM northwind.customers WHERE customerid = '{customerid}'")
+    sessao.execute(
+        f"SELECT customerid FROM northwind.customers WHERE customerid = '{customerid}'"
+    )
     cliente_existe = sessao.fetchall()
 
-    sessao.execute(f"SELECT employeeid FROM northwind.employees WHERE firstname = '{employeename}'")
+    sessao.execute(
+        f"SELECT employeeid FROM northwind.employees WHERE firstname = '{employeename}'"
+    )
     employee_tuple = sessao.fetchone()
 
-    sessao.execute(f"SELECT orderid FROM northwind.orders WHERE orderid = '{orderid}'")
+    sessao.execute(
+        f"SELECT orderid FROM northwind.orders WHERE orderid = '{orderid}'"
+    )
     order_existe = sessao.fetchall()
 
     if cliente_existe == []:
@@ -33,7 +39,9 @@ def inserir_pedido(orderid, customerid, employeename, produtos=[]):
 
     details = []
     for produto in produtos:
-        sessao.execute(f"SELECT unitprice FROM northwind.products WHERE productid = '{produto['productid']}'")
+        sessao.execute(
+            f"SELECT unitprice FROM northwind.products WHERE productid = '{produto['productid']}'"
+        )
         preco = sessao.fetchall()
         if preco == []:
             return f"Produto {produto['productid']} não existe", 404

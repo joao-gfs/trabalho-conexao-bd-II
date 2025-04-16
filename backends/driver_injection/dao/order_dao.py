@@ -13,18 +13,15 @@ def conectar_bd():
         print(e)
         return None
 
-
 def inserir_order(sessao, pedido):
     sessao.execute(
-        "INSERT INTO northwind.orders (orderid, customerid, employeeid) VALUES (%s, %s, %s);",
-        (pedido.orderid, pedido.customerid, pedido.employeeid)
+        f"INSERT INTO northwind.orders (orderid, customerid, employeeid) VALUES ({pedido.orderid}, '{pedido.customerid}', {pedido.employeeid});"
     )
 
 def inserir_order_details(sessao, order_details):
     for detail in order_details:
         sessao.execute(
-            "INSERT INTO northwind.order_details (orderid, productid, unitprice, quantity) VALUES (%s, %s, %s, %s);",
-            (detail.orderid, detail.productid, detail.unitprice, detail.quantity)
+            f"INSERT INTO northwind.order_details (orderid, productid, unitprice, quantity) VALUES ({detail.orderid}, {detail.productid}, {detail.unitprice}, {detail.quantity});"
         )
 
 def inserir_pedido(pedido, order_details):
@@ -63,9 +60,14 @@ def buscar_pedido(orderid, con):
         if not rows:
             return None
         
+        if not rows[0][1]:
+            order_date = "Não registrado"
+        else:
+            order_date = rows[0][1].isoformat()
+
         pedido = {
             "orderId": rows[0][0],
-            "orderDate": rows[0][1].isoformat(),
+            "orderDate": order_date,
             "customerName": rows[0][2],
             "employeeName": f"{rows[0][3]} {rows[0][4]}",
             "itens": []
