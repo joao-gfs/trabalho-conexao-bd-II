@@ -113,7 +113,7 @@ async function RelatorioPedido() {
             <p><strong>Cliente:</strong> ${conteudo.customerName}</p>
             <p><strong>Vendedor:</strong> ${conteudo.employeeName}</p>
             <h4>Itens do Pedido:</h4>
-            <table border="1" cellpadding="5">
+            <table style = "margin: 0 auto; border-collapse: collapse" border="1" cellpadding="5">
               <thead>
                 <tr>
                   <th>Produto</th>
@@ -182,7 +182,7 @@ async function RelatorioRanking() {
         <h3>Ranking de Vendas</h3>
         <p><strong>Período:</strong> ${startDate} a ${endDate}</p>
         <h4>Funcionários e Vendas:</h4>
-        <table border="1" cellpadding="5">
+        <table style = "margin: 0 auto; border-collapse: collapse" border="1" cellpadding="5">
             <thead>
                 <tr>
                     <th>Funcionário</th>

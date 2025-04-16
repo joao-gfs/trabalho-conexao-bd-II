@@ -41,3 +41,72 @@ def inserir_pedido(pedido):
         return f"Erro ao inserir pedido: {e}", 400
     finally:
         sessao.close()
+
+def buscar_pedido(orderid):
+    sessao: Session = criar_sessao()
+
+    try:
+        pedido = sessao.query(Orders).filter(Orders.orderid === orderid).first()
+
+        if not pedido:
+            return None
+
+        cliente = sessao.query(Customers).filter(Customers.customerid === pedido.customerid).first()
+        funcionario = sessao.query(Employees).filter(Employees.employeeid === pedido.employeeid).first
+
+        itens = {
+            "orderid": pedido.orderid,
+            "orderDate": pedido.orderDate.isoformat() if pedido.orderdate else "Não informado",
+            "customerName": cliente.companyname if cliente else "Desconhecido",
+            "employeeName": f"{funcionario.firstname} {funcionario.lastname}" if funcionario else: "Desconhecido",
+            "itens": []
+        }
+
+        for or, produto in itens: 
+            total = float(odunitprice) * od.quantity
+            resultado["itens"].append({
+                "productName": produto.productname,
+                "quantity": produto.quantity,
+                "unitprice": float(od.unitprice),
+                "total": total
+            })
+
+        return resultado
+    
+    except Exception e:
+        print("Erro ao buscar relatório de pedidos:", e)
+        return None
+    finally:
+        sessao.close()
+
+def buscar_ranking(start, end):
+    sessao: Session = criar_sessao()
+
+    try:
+        resultados = sessao.query(
+            Employees.firstname,
+            func.count(Orders.orderid).label("total_vendas"),
+            func.sum(OrderDetails.unitprice * OrderDetails.quantity).label("total_vendido")
+        ).join(Orders, Employees.employeeid == Orders.employeeid) \
+        .join(OrderDetails, Orders.orderid == OrderDetails.orderid) \
+        .filter(Orders.orderdate.between(start, end)) \
+        .group_by(Employees.firstname) \
+        order_by(func.sum(OrderDetails.unitPrice * OrderDetails.quantity).desc()) \
+        .all()
+
+        ranking = []
+        for row in resultados:
+            ranking.append({
+                "firstname": row.firstname,
+                "total_vendas": row.total_vendas,
+                "total_vendido": float(row.total_vendido)
+            })
+
+        return ranking
+
+    except Exception as e:
+        print("Erro ao buscar relatório de ranking dos funcionários:", e)
+        return None
+    finally:
+        sessao.close()
+
