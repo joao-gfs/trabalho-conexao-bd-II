@@ -1,11 +1,11 @@
-import psycopg
-import inspect as constructor
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy.inspection import inspect
 import sys
 sys.path.append('../')
-from model.models import Orders, OrderDetails, Customers, Employees
+import psycopg
+import inspect as constructor
+from sqlalchemy import create_engine, func
+from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.inspection import inspect
+from model.models import Orders, OrderDetails, Customers, Employees, Products
 
 def conectar_bd():
     try:
@@ -55,7 +55,7 @@ def buscar_pedido(orderid):
             return None
 
         cliente = sessao.query(Customers).filter(Customers.customerid == pedido.customerid).first()
-        funcionario = sessao.query(Employees).filter(Employees.employeeid == pedido.employeeid).first
+        funcionario = sessao.query(Employees).filter(Employees.employeeid == pedido.employeeid).first()
 
         itens = sessao.query(OrderDetails, Products) \
         .join(Products, OrderDetails.productid == Products.productid) \

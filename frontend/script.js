@@ -101,7 +101,7 @@ async function RelatorioPedido() {
         const resultado = document.getElementById('resultadoRelatorio');
         const totalGeral = conteudo.itens.reduce((soma, item) => soma + item.total, 0);
 
-        if (conteudo.orderDate == "Não registrado") {
+        if (conteudo.orderDate == "Não informado") {
             order_date = conteudo.orderDate
         } else {
             order_date = new Date(conteudo.orderDate).toLocaleDateString()

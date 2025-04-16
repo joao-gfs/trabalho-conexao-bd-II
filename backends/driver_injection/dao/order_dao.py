@@ -61,7 +61,7 @@ def buscar_pedido(orderid, con):
             return None
         
         if not rows[0][1]:
-            order_date = "Não registrado"
+            order_date = "Não informado"
         else:
             order_date = rows[0][1].isoformat()
 
