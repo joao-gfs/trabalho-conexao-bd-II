@@ -95,7 +95,6 @@ async function RelatorioPedido() {
         if (!resposta.ok) {
             throw new Error(`Pedido não encontrado: ${dados.erro}`);
         }
-
         
         const conteudo = dados.mensagem
 
@@ -103,7 +102,7 @@ async function RelatorioPedido() {
         const totalGeral = conteudo.itens.reduce((soma, item) => soma + item.total, 0);
 
         resultado.innerHTML = `
-            <h3>Pedido #${conteudo.orderId}</h3>
+            <h3>Pedido ${conteudo.orderId}</h3>
             <p><strong>Data:</strong> ${new Date(conteudo.orderDate).toLocaleDateString()}</p>
             <p><strong>Cliente:</strong> ${conteudo.customerName}</p>
             <p><strong>Vendedor:</strong> ${conteudo.employeeName}</p>
@@ -152,36 +151,48 @@ async function RelatorioRanking() {
   
     try {
       const resposta = await fetch(`http://localhost:5000/ranking?start=${startDate}&end=${endDate}`);
-      if (!resposta.ok) {
-        throw new Error("Erro ao buscar ranking.");
-      }
-  
+      
       const dados = await resposta.json();
+      
+      if (!resposta.ok) {
+        throw new Error(`Erro ao buscar Ranking: ${dados.erro}`);
+      }
   
       const resultado = document.getElementById('resultadoRanking');
-      if (dados.length === 0) {
-        resultado.innerHTML = `<p>Nenhum resultado encontrado para o período.</p>`;
-        return;
-      }
+      const totalVendido = dados.reduce((soma, func) => soma + parseFloat(func.total_vendido), 0);
+      const totalVendas = dados.reduce((soma, func) => soma + func.total_vendas, 0);
   
       resultado.innerHTML = `
+        <h3>Ranking de Vendas</h3>
+        <p><strong>Período:</strong> ${startDate} a ${endDate}</p>
+        <h4>Funcionários e Vendas:</h4>
         <table border="1" cellpadding="5">
-          <thead>
-            <tr>
-              <th>Funcionário</th>
-              <th>Total de Vendas</th>
-              <th>Total Vendido (R$)</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${dados.map(func => `
-              <tr>
-                <td>${func.firstname}</td>
-                <td>${func.total_vendas}</td>
-                <td>R$ ${parseFloat(func.total_vendido).toFixed(2)}</td>
-              </tr>
-            `).join('')}
-          </tbody>
+            <thead>
+                <tr>
+                    <th>Funcionário</th>
+                    <th>Total de Vendas</th>
+                    <th>Total Vendido (R$)</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${dados.map(func => `
+                    <tr>
+                        <td>${func.firstname}</td>
+                        <td>${func.total_vendas}</td>
+                        <td>R$ ${parseFloat(func.total_vendido).toFixed(2)}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2"><strong>Total Geral de Vendas:</strong></td>
+                    <td><strong>${totalVendas}</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><strong>Total Vendido (R$):</strong></td>
+                    <td><strong>R$ ${totalVendido.toFixed(2)}</strong></td>
+                </tr>
+            </tfoot>
         </table>
       `;
     } catch (erro) {

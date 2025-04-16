@@ -86,3 +86,43 @@ def buscar_pedido(orderid, con):
     finally:
         sessao.close()
         con.close()
+
+def buscar_ranking(start, end, con):
+    con = conectar_bd()
+    if con is None:
+        return "Erro de conexão com banco de dados", 500
+    sessao = con.cursor()
+
+    query = f"""
+        select e.firstname, count(o.orderid) as total_vendas, sum(od.unitprice * od.quantity) as total_vendido
+        from northwind.orders o join northwind.employees e on o.employeeid = e.employeeid
+        join northwind.order_details od on o.orderid = od.orderid
+        where o.orderdate between '{start}' and '{end}'
+        group by e.firstname order by total_vendido desc
+    """
+
+    try:
+        sessao.execute(query)
+        rows = sessao.fetchall()
+
+        if not rows:
+            return None
+
+        ranking = []
+        for row in rows:
+            ranking.append({
+                "firstname": row[0],
+                "total_vendas": row[1],
+                "total_vendido": float(row[2])
+            })
+
+        return ranking
+    except Exception as e:
+        print("Erro ao buscar ranking:", e)
+        return None
+    finally:
+        sessao.close()
+        con.close()
+        
+
+        

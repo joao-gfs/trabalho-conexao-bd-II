@@ -61,3 +61,18 @@ def get_pedido(orderid):
         return str(e), 500
     finally:
         con_db.close()
+
+def get_ranking(start, end):
+    con_db = dao.conectar_bd()
+    if con_db is None:
+        return "Erro de conexão com o banco de dados", 500
+
+    try:
+        data = dao.buscar_ranking(start, end, con_db)
+        if not data:
+            return "Ranking de funcionários não encontrado", 404
+        return data, 200
+    except Exception as e:
+        return str(e), 500
+    finally: 
+        con_db.close()
