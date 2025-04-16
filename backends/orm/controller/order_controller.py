@@ -53,7 +53,7 @@ def inserir_pedido(orderid, customerid, employeename, produtos=[]):
 
 def get_pedido(orderid):
     try:
-        data = buscar_pedido(orderid)
+        data = dao.buscar_pedido(orderid)
         if not data:
             return "Pedido não encontrado", 404
         return data, 200
@@ -62,7 +62,7 @@ def get_pedido(orderid):
 
 def get_ranking(start, end):
     try:
-        data = buscar_ranking(start, end)
+        data = dao.buscar_ranking(start, end)
         if not data:
             return "Ranking não encontrado", 400
         return data, 200

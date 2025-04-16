@@ -3,6 +3,9 @@ import inspect as constructor
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.inspection import inspect
+import sys
+sys.path.append('../')
+from model.models import Orders, OrderDetails, Customers, Employees
 
 def conectar_bd():
     try:
@@ -46,34 +49,38 @@ def buscar_pedido(orderid):
     sessao: Session = criar_sessao()
 
     try:
-        pedido = sessao.query(Orders).filter(Orders.orderid === orderid).first()
+        pedido = sessao.query(Orders).filter(Orders.orderid == orderid).first()
 
         if not pedido:
             return None
 
-        cliente = sessao.query(Customers).filter(Customers.customerid === pedido.customerid).first()
-        funcionario = sessao.query(Employees).filter(Employees.employeeid === pedido.employeeid).first
+        cliente = sessao.query(Customers).filter(Customers.customerid == pedido.customerid).first()
+        funcionario = sessao.query(Employees).filter(Employees.employeeid == pedido.employeeid).first
 
-        itens = {
+        itens = sessao.query(OrderDetails, Products) \
+        .join(Products, OrderDetails.productid == Products.productid) \
+        .filter(OrderDetails.orderid == orderid).all()
+
+        resultado = {
             "orderid": pedido.orderid,
-            "orderDate": pedido.orderDate.isoformat() if pedido.orderdate else "Não informado",
+            "orderDate": pedido.orderdate.isoformat() if pedido.orderdate else "Não informado",
             "customerName": cliente.companyname if cliente else "Desconhecido",
-            "employeeName": f"{funcionario.firstname} {funcionario.lastname}" if funcionario else: "Desconhecido",
+            "employeeName": f"{funcionario.firstname} {funcionario.lastname}" if funcionario else "Desconhecido",
             "itens": []
         }
 
-        for or, produto in itens: 
-            total = float(odunitprice) * od.quantity
+        for orderdetails, produto in itens: 
+            total = float(orderdetails.unitprice) * orderdetails.quantity
             resultado["itens"].append({
                 "productName": produto.productname,
-                "quantity": produto.quantity,
-                "unitprice": float(od.unitprice),
+                "quantity": orderdetails.quantity,
+                "unitPrice": float(orderdetails.unitprice),
                 "total": total
             })
 
         return resultado
     
-    except Exception e:
+    except Exception as e:
         print("Erro ao buscar relatório de pedidos:", e)
         return None
     finally:
@@ -91,7 +98,7 @@ def buscar_ranking(start, end):
         .join(OrderDetails, Orders.orderid == OrderDetails.orderid) \
         .filter(Orders.orderdate.between(start, end)) \
         .group_by(Employees.firstname) \
-        order_by(func.sum(OrderDetails.unitPrice * OrderDetails.quantity).desc()) \
+        .order_by(func.sum(OrderDetails.unitprice * OrderDetails.quantity).desc()) \
         .all()
 
         ranking = []
