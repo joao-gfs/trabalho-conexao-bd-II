@@ -90,13 +90,16 @@ def buscar_ranking(start, end):
     sessao: Session = criar_sessao()
 
     try:
+        startDate = datetime.strptime(start, "%Y-%m-%d").date()  
+        endDate = datetime.strptime(end, "%Y-%m-%d").date()
+
         resultados = sessao.query(
             Employees.firstname,
             func.count(Orders.orderid).label("total_vendas"),
             func.sum(OrderDetails.unitprice * OrderDetails.quantity).label("total_vendido")
         ).join(Orders, Employees.employeeid == Orders.employeeid) \
         .join(OrderDetails, Orders.orderid == OrderDetails.orderid) \
-        .filter(Orders.orderdate.between(start, end)) \
+        .filter(Orders.orderdate.between(startDate, endDate)) \
         .group_by(Employees.firstname) \
         .order_by(func.sum(OrderDetails.unitprice * OrderDetails.quantity).desc()) \
         .all()
