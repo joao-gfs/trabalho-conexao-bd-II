@@ -27,8 +27,11 @@ def relatorio_pedido(orderid):
         return jsonify({"erro": data}), status
     return jsonify({"mensagem": data}), status
 
-@app.route("/ranking/<start>/<end>", methods=['GET'])
-def relatorio_ranking(start, end):
+@app.route("/ranking", methods=['GET'])
+def relatorio_ranking():
+    start = request.args.get('start')
+    end = request.args.get('end')
+
     data, status = ctrl.get_ranking(start, end)
 
     if status >= 400:

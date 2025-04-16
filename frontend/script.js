@@ -142,7 +142,7 @@ async function RelatorioPedido() {
 
 function convertDate(date) {
   const parte = date.split('-');
-  return `${parte[2]}-${parte[1]}-${parte[0]}`; 
+  return `${parte[0]}-${parte[1]}-${parte[2]}`; 
 }
 
 async function RelatorioRanking() {
@@ -161,14 +161,16 @@ async function RelatorioRanking() {
       const resposta = await fetch(`http://localhost:5000/ranking?start=${startDateFormat}&end=${endDateFormat}`);
       
       const dados = await resposta.json();
-      
+
       if (!resposta.ok) {
-        throw new Error(`Erro ao buscar Ranking: ${dados.erro}`);
+        throw new Error(`Pedido não encontrado: ${dados.erro}`);
       }
-  
+    
+      const conteudo = dados.mensagem
+
       const resultado = document.getElementById('resultadoRanking');
-      const totalVendido = dados.reduce((soma, func) => soma + parseFloat(func.total_vendido), 0);
-      const totalVendas = dados.reduce((soma, func) => soma + func.total_vendas, 0);
+      const totalVendido = conteudo.reduce((soma, func) => soma + parseFloat(func.total_vendido), 0);
+      const totalVendas = conteudo.reduce((soma, func) => soma + func.total_vendas, 0);
   
       resultado.innerHTML = `
         <h3>Ranking de Vendas</h3>
@@ -183,7 +185,7 @@ async function RelatorioRanking() {
                 </tr>
             </thead>
             <tbody>
-                ${dados.map(func => `
+                ${conteudo.map(func => `
                     <tr>
                         <td>${func.firstname}</td>
                         <td>${func.total_vendas}</td>
