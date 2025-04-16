@@ -140,6 +140,11 @@ async function RelatorioPedido() {
     }
 }
 
+function convertDate(date) {
+  const parte = date.split('-');
+  return `${parte[2]}-${parte[1]}-${parte[0]}`; 
+}
+
 async function RelatorioRanking() {
     const startDate = document.getElementById('startdate').value;
     const endDate = document.getElementById('enddate').value;
@@ -148,9 +153,12 @@ async function RelatorioRanking() {
       alert("Informe as duas datas.");
       return;
     }
+
+    const startDateFormat = convertDate(startDate);
+    const endDateFormat = convertDate(endDate);
   
     try {
-      const resposta = await fetch(`http://localhost:5000/ranking?start=${startDate}&end=${endDate}`);
+      const resposta = await fetch(`http://localhost:5000/ranking?start=${startDateFormat}&end=${endDateFormat}`);
       
       const dados = await resposta.json();
       
