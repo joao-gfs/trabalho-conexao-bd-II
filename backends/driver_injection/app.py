@@ -14,7 +14,7 @@ def inserir_pedido():
         data['employeename'],
         data['produtos']
     )
-    
+
     if status >= 400:
         return jsonify({"erro": mensagem}), status
     return jsonify({"mensagem": mensagem}), status
@@ -26,4 +26,3 @@ def relatorio_pedido(orderid):
     if status >= 400:
         return jsonify({"erro": data}), status
     return jsonify({"mensagem": data}), status
-

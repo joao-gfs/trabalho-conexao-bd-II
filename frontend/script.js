@@ -90,20 +90,23 @@ async function RelatorioPedido() {
     try {
         const resposta = await fetch(`http://localhost:5000/pedido/${orderId}`);
 
-        if (!resposta.ok) {
-            throw new Error('Pedido não encontrado.');
-        }
-
         const dados = await resposta.json();
 
+        if (!resposta.ok) {
+            throw new Error(`Pedido não encontrado: ${dados.erro}`);
+        }
+
+        
+        const conteudo = dados.mensagem
+
         const resultado = document.getElementById('resultadoRelatorio');
-        const totalGeral = dados.itens.reduce((soma, item) => soma + item.total, 0);
+        const totalGeral = conteudo.itens.reduce((soma, item) => soma + item.total, 0);
 
         resultado.innerHTML = `
-            <h3>Pedido #${dados.orderId}</h3>
-            <p><strong>Data:</strong> ${new Date(dados.orderDate).toLocaleDateString()}</p>
-            <p><strong>Cliente:</strong> ${dados.customerName}</p>
-            <p><strong>Vendedor:</strong> ${dados.employeeName}</p>
+            <h3>Pedido #${conteudo.orderId}</h3>
+            <p><strong>Data:</strong> ${new Date(conteudo.orderDate).toLocaleDateString()}</p>
+            <p><strong>Cliente:</strong> ${conteudo.customerName}</p>
+            <p><strong>Vendedor:</strong> ${conteudo.employeeName}</p>
             <h4>Itens do Pedido:</h4>
             <table border="1" cellpadding="5">
               <thead>
@@ -115,7 +118,7 @@ async function RelatorioPedido() {
                 </tr>
               </thead>
               <tbody>
-                ${dados.itens.map(item => `
+                ${conteudo.itens.map(item => `
                   <tr>
                     <td>${item.productName}</td>
                     <td>${item.quantity}</td>

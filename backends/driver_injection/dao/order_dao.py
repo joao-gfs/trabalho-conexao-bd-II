@@ -5,8 +5,8 @@ def conectar_bd():
         bd = psycopg.connect(
             host='localhost',
             dbname='northwind',
-            user='hiara',
-            password='12345'
+            user='postgres',
+            password='pgsql456'
         )
         return bd
     except Exception as e:
@@ -50,12 +50,12 @@ def buscar_pedido(orderid, con):
         return "Erro de conexão com banco de dados", 500
     sessao = con.cursor()
 
-    query = """
+    query = f"""
         select o.orderid, o.orderdate, c.companyname, e.firstname, e.lastname, p.productname, od.quantity, od.unitprice, od.quantity * od.unitprice as total 
         from northwind.orders o join northwind.order_details od on o.orderid = od.orderid 
         join northwind.customers c on o.customerid = c.customerid join northwind.employees e on o.employeeid = e.employeeid join northwind.products p on od.productid = p.productid where o.orderid = {orderid}
     """
-
+    
     try:
         sessao.execute(query)
         rows = sessao.fetchall()
