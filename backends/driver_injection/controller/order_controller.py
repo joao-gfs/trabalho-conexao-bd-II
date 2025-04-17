@@ -15,16 +15,19 @@ def inserir_pedido(orderid, customerid, employeename, produtos=[]):
     sessao.execute(
         f"SELECT customerid FROM northwind.customers WHERE customerid = '{customerid}'"
     )
+    con_db.commit()
     cliente_existe = sessao.fetchall()
 
     sessao.execute(
         f"SELECT employeeid FROM northwind.employees WHERE firstname = '{employeename}'"
     )
+    con_db.commit()
     employee_tuple = sessao.fetchone()
 
     sessao.execute(
         f"SELECT orderid FROM northwind.orders WHERE orderid = '{orderid}'"
     )
+    con_db.commit()
     order_existe = sessao.fetchall()
 
     if cliente_existe == []:
@@ -33,7 +36,7 @@ def inserir_pedido(orderid, customerid, employeename, produtos=[]):
         return f"Funcionário {employeename} não existe", 404
     if order_existe != []:
         return f"Pedido com id {orderid} já existe", 409
-    
+
     employeeid = employee_tuple[0]
     pedido = Orders(orderid=orderid, customerid=customerid, employeeid=employeeid)
 
