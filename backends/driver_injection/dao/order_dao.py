@@ -41,7 +41,7 @@ def inserir_pedido(pedido, order_details):
         sessao.close()
         con.close()
 
-def buscar_pedido(orderid, con):
+def buscar_pedido(orderid):
     con = conectar_bd()
     if con is None:
         return "Erro de conexão com banco de dados", 500
@@ -89,7 +89,7 @@ def buscar_pedido(orderid, con):
         sessao.close()
         con.close()
 
-def buscar_ranking(start, end, con):
+def buscar_ranking(start, end):
     con = conectar_bd()
     if con is None:
         return "Erro de conexão com banco de dados", 500

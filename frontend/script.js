@@ -93,7 +93,7 @@ async function RelatorioPedido() {
         const dados = await resposta.json();
 
         if (!resposta.ok) {
-            throw new Error(`Pedido não encontrado: ${dados.erro}`);
+            throw new Error(`${dados.erro}`);
         }
         
         const conteudo = dados.mensagem

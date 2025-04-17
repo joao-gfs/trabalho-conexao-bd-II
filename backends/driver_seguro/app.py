@@ -19,7 +19,7 @@ def inserir_pedido():
         return jsonify({"erro": mensagem}), status
     return jsonify({"mensagem": mensagem}), status
 
-@app.route("/pedido/<int:orderid>", methods=['GET'])
+@app.route("/pedido/<string:orderid>", methods=['GET'])
 def relatorio_pedido(orderid):
     data, status = ctrl.get_pedido(orderid)
 
