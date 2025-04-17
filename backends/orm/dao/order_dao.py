@@ -63,7 +63,7 @@ def buscar_pedido(orderid):
         .filter(OrderDetails.orderid == orderid).all()
 
         resultado = {
-            "orderid": pedido.orderid,
+            "orderId": pedido.orderid,
             "orderDate": pedido.orderdate.isoformat() if pedido.orderdate else "Não informado",
             "customerName": cliente.companyname if cliente else "Desconhecido",
             "employeeName": f"{funcionario.firstname} {funcionario.lastname}" if funcionario else "Desconhecido",
